@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iris Loader</title>
+  <script src="dist/indicator.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setupIrisIndicator(document.querySelector('#webgl'))
+    })
+  </script>
+
+  <style>
+    :root {
+      --charcoal-black: rgb(77, 77, 102);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 0px;
+      margin-top: 0px;
+    }
+
+    main {
+      padding: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    footer {
+      display: block;
+      margin: 0;
+      margin-top: 20px;
+      padding: 20px;
+      text-align: center;
+      background-color: var(--charcoal-black);
+      color: white;
+    }
+
+    #fps-counter {
+      font-variant-numeric: tabular-nums;
+    }
+
+    #webgl {
+      display: block;
+      border-radius: 50%;
+      /*
+        Fix the size of the canvas to 100% of the available space (within the
+        main container) minus the padding (of the main container). We have to
+        use the `min`-clause to ensure the canvas never exceeds the main
+        container's width.
+      */
+      width: min(calc(100dvw - 20px), 580px);
+      height: min(calc(100dvw - 20px), 580px);
+      background-color: black;
+      box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, .5);
+    }
+
+    #render-information {
+      font-family: monospace;
+      padding: 10px;
+      border: 1px solid gray;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid gray;
+      width: 80%;
+    }
+
+    details {
+      border: 1px solid gray;
+      border-radius: 8px;
+      margin: 15px 0;
+      padding: 10px;
+
+      summary {
+        font-weight: bold;
+        cursor: pointer;
+        transform: translateY(-100%);
+        background-color: white;
+        display: inline-block;
+        padding: 0 10px;
+        position: absolute;
+
+        &::before {
+          content: '[+] ';
+        }
+      }
+
+      &:open summary::before {
+        content: '[-] ';
+      }
+    }
+
+    .form-field {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+
+      small {
+        opacity: 0.5;
+      }
+
+      &.three-cols {
+        grid-template-columns: 2fr 1fr 1fr;
+      }
+
+      &.three-cols-reverse {
+        grid-template-columns: 1fr 1fr 2fr;
+      }
+    }
+
+    div.two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    @media(prefers-color-scheme: dark) {
+      body {
+        background-color: rgb(77, 77, 102);
+        color: white;
+      }
+
+      details summary {
+        background-color: rgb(77, 77, 102);
+      }
+
+      footer {
+        color: var(--charcoal-black);
+        background-color: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Iris Indicator</h1>
+    <p>
+      This is a demonstration page for the Iris loading indicator, a visual loading-
+      state indicator implemented using WebGL. Feel free to change and adjust the
+      settings for the indicator to see how it changes appearance. You can find
+      the <a href="https://github.com/nathanlesage/iris-indicator" target="_blank">source code here</a>. For technical details
+      and motivation, <a href="#" target="_blank">read the article</a>.
+    </p>
+
+    <details open>
+      <summary>Settings</summary>
+      <div class="form-field">
+        <label for="rotation-speed">
+          Seconds per rotation:<br>
+          <em><small>(higher number = slower rotation)</small></em>
+        </label>
+        <input type="range" min="10" max="240" id="rotation-speed">
+      </div>
+
+      <div class="form-field">
+        <label for="ray-speed">
+          Ray movement speed (in seconds):<br>
+          <em><small>(higher number = slower movement)</small></em>
+        </label>
+        <input type="range" min="0.1" max="5.0" step="0.1" id="ray-speed">
+      </div>
+
+      <div class="form-field">
+        <label for="enable-msaa">
+          Enable MSAA:<br>
+          <em><small>(Multi-Sample Anti-Aliasing)</small></em>
+        </label>
+        <input id="enable-msaa" type="checkbox" checked>
+      </div>
+
+      <div class="form-field">
+        <label for="enable-bloom">
+          Enable Bloom Effect:<br>
+          <em><small>(large performance impact)</small></em>
+        </label>
+        <input id="enable-bloom" type="checkbox" checked>
+      </div>
+
+      <div class="form-field">
+        <label for="bloom-intensity">
+          Bloom intensity:<br>
+          <em><small>(moderate performance impact)</small></em>
+        </label>
+        <select id="bloom-intensity">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="4">4x</option>
+          <option value="8">8x</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="rendering-resolution">
+          Rendering resolution:<br>
+          <em><small>(moderate performance impact)</small></em>
+        </label>
+        <select id="rendering-resolution">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="4">4x</option>
+          <option value="8">8x</option>
+          <option value="16">16x</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="segment-adjustment-step-duration">
+          Segment adjustment step duration:<br>
+          <em><small>(how fast the segments will move to their target ratio)</small></em>
+        </label>
+        <select id="segment-adjustment-step-duration">
+          <option value="50">50ms (fast)</option>
+          <option value="100">100ms</option>
+          <option value="200">200ms (default)</option>
+          <option value="400">400ms</option>
+          <option value="800">800ms (slow)</option>
+        </select>
+      </div>
+    </details>
+
+    <details>
+      <summary>Segments</summary>
+      <div class="two-cols">
+        <div class="form-field three-cols">
+          <label for="segment-1-count">Segment 1</label>
+          <select id="segment-1-color">
+            <option value="red" selected>Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="yellow">Yellow</option>
+            <option value="purple">Purple</option>
+          </select>
+          <input id="segment-1-count" type="number" min="0" max="100" value="0">
+        </div>
+        <div class="form-field three-cols-reverse">
+          <input id="segment-2-count" type="number" min="0" max="100" value="0">
+          <select id="segment-2-color">
+            <option value="red">Red</option>
+            <option value="green" selected>Green</option>
+            <option value="blue">Blue</option>
+            <option value="yellow">Yellow</option>
+            <option value="purple">Purple</option>
+          </select>
+          <label for="segment-2-count">Segment 2</label>
+        </div>
+      </div>
+
+      <div class="two-cols">
+        <div class="form-field three-cols">
+          <label for="segment-3-count">Segment 3</label>
+          <select id="segment-3-color">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue" selected>Blue</option>
+            <option value="yellow">Yellow</option>
+            <option value="purple">Purple</option>
+          </select>
+          <input id="segment-3-count" type="number" min="0" max="100" value="0">
+        </div>
+        <div class="form-field three-cols-reverse">
+          <input id="segment-4-count" type="number" min="0" max="100" value="0">
+          <select id="segment-4-color">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="yellow">Yellow</option>
+            <option value="purple" selected>Purple</option>
+          </select>
+          <label for="segment-4-count">Segment 4</label>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="form-field">
+        <label for="enable-simulation">
+          Simulate state change:<br>
+          <em><small>(automatically animates segments 1-3)</small></em>
+        </label>
+        <input id="enable-simulation" type="checkbox" checked>
+      </div>
+    </details>
+
+    <details>
+      <summary>FPS</summary>
+
+      <p id="fps-counter">Rendering speed: 0 fps</p>
+
+      <div class="form-field">
+        <label for="fps-limit-count">
+          FPS Limit:<br>
+          <em><small>(Limit will rarely be reached)</small></em>
+        </label>
+        <select id="fps-limit-count">
+          <option value="30">30 fps</option>
+          <option value="60">60 fps</option>
+          <option value="75">75 fps</option>
+          <option value="90">90 fps</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="fps-limit">
+          Enable FPS Limiter:<br>
+          <em><small>(if off, will synchronize with the display's refresh rate)</small></em>
+        </label>
+        <input id="fps-limit" type="checkbox" checked>
+      </div>
+    </details>
+
+    <canvas id="webgl"></canvas>
+  </main>
+
+  <footer>
+    Iris Indicator WebGL Study | &copy; 2026 Hendrik Erz | <a href="https://github.com/nathanlesage/iris-indicator">View Source Code</a>
+  </footer>
+</body>
+</html>
