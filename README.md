@@ -1,6 +1,6 @@
 # Iris Indicator
 
-> A study to implement a loading/progress indicator fully in WebGL. [View a demo here (requires a modern browser)](https://nathanlesage.github.io/iris-indicator).
+> A study to implement a loading/progress indicator fully in WebGL. [View a demo here (requires a modern browser)](https://nathanlesage.github.io/iris-indicator/index.htm).
 
 The Iris Indicator is a loading indicator that can display a dynamic state while conveying a perception of movement. It is fully implemented using WebGL and offers a plethora of settings to adjust its behavior.
 
@@ -16,7 +16,7 @@ The Iris Indicator is a loading indicator that can display a dynamic state while
 * FPS limiter to save on resources
 * Almost everything is configurable
 
-[View the demo (requires a modern browser)](https://nathanlesage.github.io/iris-indicator).
+[View the demo (requires a modern browser)](https://nathanlesage.github.io/iris-indicator/index.htm).
 
 ## Background
 
