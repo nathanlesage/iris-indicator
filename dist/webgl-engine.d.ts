@@ -40,6 +40,7 @@ export declare class WebGLEngine {
     private resolutionUniformLocation;
     private matrixUniformLocation;
     private passUniformLocation;
+    private textureUniformLocation;
     private blurTexUniformLocation;
     private blurHorizontalUniformLocation;
     private blendRatioUniformLocation;
@@ -139,7 +140,7 @@ export declare class WebGLEngine {
      *
      * @return  {WebGLTexture}  The created and configured texture.
      */
-    createTexture(): WebGLTexture;
+    private createTexture;
     /**
      * Set a given framebuffer including a viewport setting. Courtesy of WebGL
      * fundamentals.

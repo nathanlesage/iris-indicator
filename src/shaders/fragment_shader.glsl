@@ -206,7 +206,7 @@ void main() {
     fragColor = blur();
   } else if (v_pass == FRAGMENT_PASS_COMPOSITE) {
     // Compositing pass: This receives two textures, a blurred one and the
-    // original, and it should merge the two. It also applies some tone mapping.
+    // original, and it should merge the two.
     vec4 originalColor = texture(u_texture, v_texcoord);
     vec4 blurColor = texture(u_blurTexture, v_texcoord);
     fragColor = originalColor + blurColor;

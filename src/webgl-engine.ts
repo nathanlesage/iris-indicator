@@ -70,6 +70,7 @@ export class WebGLEngine {
   private resolutionUniformLocation: WebGLUniformLocation|null
   private matrixUniformLocation: WebGLUniformLocation|null
   private passUniformLocation: WebGLUniformLocation|null
+  private textureUniformLocation: WebGLUniformLocation|null
   private blurTexUniformLocation: WebGLUniformLocation|null
   private blurHorizontalUniformLocation: WebGLUniformLocation|null
   private blendRatioUniformLocation: WebGLUniformLocation|null
@@ -190,9 +191,16 @@ export class WebGLEngine {
     this.positionAttributeLocation = gl.getAttribLocation(this.program, 'a_position')
     this.matrixUniformLocation = gl.getUniformLocation(this.program, 'u_matrix')
     this.passUniformLocation = gl.getUniformLocation(this.program, 'u_pass')
+    this.textureUniformLocation = gl.getUniformLocation(this.program, 'u_texture')
     this.blurTexUniformLocation = gl.getUniformLocation(this.program, 'u_blurTexture')
     this.blurHorizontalUniformLocation = gl.getUniformLocation(this.program, 'u_blur_horizontal')
     this.blendRatioUniformLocation = gl.getUniformLocation(this.program, 'u_blendRatio')
+
+    // We always keep the original and blur textures at these positions, meaning
+    // we don't have to update these values ever again. We just need to make
+    // sure that we bind the correct textures to the correct slots.
+    gl.uniform1i(this.textureUniformLocation, 0)
+    gl.uniform1i(this.blurTexUniformLocation, 1)
 
     // Set up the color structs. Since GLSL is a bit iffy, we have to actually
     // address each of the actual hardcoded values individually, thus we store
@@ -370,7 +378,7 @@ export class WebGLEngine {
    *
    * @return  {WebGLTexture}  The created and configured texture.
    */
-  createTexture () {
+  private createTexture (): WebGLTexture {
     const gl = this.gl
     const texture = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -581,7 +589,6 @@ export class WebGLEngine {
     gl.bindTexture(gl.TEXTURE_2D, sourceTexture)
     gl.activeTexture(gl.TEXTURE0 + 1)
     gl.bindTexture(gl.TEXTURE_2D, this.pingpong[lastActiveTexture]!.rbuf)
-    gl.uniform1i(this.blurTexUniformLocation, 1)
 
     // Draw the composite image
     gl.drawArrays(gl.TRIANGLES, 0, 6) // 6 coordinates
