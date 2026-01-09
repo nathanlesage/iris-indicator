@@ -1,6 +1,6 @@
 # Iris Indicator
 
-> A study to implement a loading/progress indicator fully in WebGL. [View a demo here (requires a modern browser)](https://nathanlesage.github.io/iris-indicator/index.htm).
+> A study to implement a loading/progress indicator fully in WebGL. [View a demo here (requires a modern browser)](https://nathanlesage.github.io/iris-indicator).
 
 ![A Screenshot of the indicator](screenshot.png)
 
@@ -36,6 +36,8 @@ At the same time, I had the sense that I wanted to make the iris appear "bright,
 This is when I decided that I would want to use this opportunity to implement the entire thing completely in WebGL, which would allow me pixel-perfect control at reasonable performance.
 
 At Christmas 2025, I sat down in my free time to code up this study. It turned out to be *a lot* more complex than I thought, but the end result is – in my opinion – very pretty.
+
+[Read the full story on my website](https://www.hendrik-erz.de/post/a-rabbit-hole-called-webgl)
 
 ## Stack
 
