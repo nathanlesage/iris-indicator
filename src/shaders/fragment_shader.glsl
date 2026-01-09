@@ -211,14 +211,7 @@ void main() {
     vec4 blurColor = texture(u_blurTexture, v_texcoord);
     fragColor = originalColor + blurColor;
   } else if (v_pass == FRAGMENT_PASS_TONEMAP) {
-    float alpha = texture(u_texture, v_texcoord).a;
-    vec3 result_color = texture(u_texture, v_texcoord).rgb;
-    // const float exposure = 0.5;
-    const float exposure = 0.5;
-    result_color = vec3(1.0) - exp(-result_color.rgb * exposure);
-    // Gamma correction
-    const float gamma = 0.8;
-    result_color = pow(result_color.rgb, vec3(1.0 / gamma));
-    fragColor = vec4(result_color, alpha);
+    vec4 result_color = texture(u_texture, v_texcoord);
+    fragColor = vec4(tonemap(result_color.rgb), result_color.a);
   }
 }
