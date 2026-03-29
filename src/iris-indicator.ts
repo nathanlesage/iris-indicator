@@ -1,6 +1,6 @@
 import { WebGLEngine } from "./webgl-engine"
 import { MAX_SUPPORTED_SEGMENTS, type Vec4 } from '.'
-import { coordsForRay, mat3mul, translationMatrix, rotationMatrix } from "./util/math"
+import { coordsForRay, mat3mul, translationMatrix, rotationMatrix, scaleMatrix } from "./util/math"
 
 /**
  * Describes an individual ray. This struct holds all information the engine
@@ -626,9 +626,14 @@ export class IrisIndicator {
     const originX = cWidth / 2
     const originY = cHeight / 2
 
-    const mat = mat3mul(
+    const matTemp = mat3mul(
       translationMatrix(originX, originY),
       rotationMatrix(moveByRadians)
+    )
+
+    const mat = mat3mul(
+      matTemp,
+      scaleMatrix(1, 1)
     )
 
     // Provide the calculated data to the engine to actually draw everything.

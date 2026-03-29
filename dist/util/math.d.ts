@@ -41,6 +41,17 @@ export declare function translationMatrix(tx: number, ty: number): Mat3;
  */
 export declare function rotationMatrix(rad: number): Mat3;
 /**
+ * Takes two scale parameters and produces a matrix that, when multiplied with a
+ * position vector, will scale this vector by this amount. Courtesy of WebGL
+ * fundamentals.
+ *
+ * @param   {number}  sx  The width-scale
+ * @param   {number}  sy  The height-scale
+ *
+ * @return  {Mat3}        The matrix
+ */
+export declare function scaleMatrix(sx: number, sy: number): Mat3;
+/**
  * Takes two matrices and multiplies them. Courtesy of WebGL fundamentals.
  *
  * @param   {Mat3}  mat1  Matrix one

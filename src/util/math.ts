@@ -62,8 +62,26 @@ export function rotationMatrix (rad: number): Mat3 {
   const s = Math.sin(rad)
   return [
     c, -s, 0,
-    s, c, 0,
-    0, 0, 1
+    s,  c, 0,
+    0,  0, 1
+  ]
+}
+
+/**
+ * Takes two scale parameters and produces a matrix that, when multiplied with a
+ * position vector, will scale this vector by this amount. Courtesy of WebGL
+ * fundamentals.
+ *
+ * @param   {number}  sx  The width-scale
+ * @param   {number}  sy  The height-scale
+ *
+ * @return  {Mat3}        The matrix
+ */
+export function scaleMatrix (sx: number, sy: number): Mat3 {
+  return [
+    sx, 0, 0,
+    0, sy, 0,
+    0,  0, 1
   ]
 }
 
